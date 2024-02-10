@@ -8,33 +8,110 @@
     body {
       font-family: Arial, sans-serif;
       text-align: center;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    p {
+      color: #555;
+    }
+
+    input[type="text"] {
+      padding: 8px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #message {
+      font-size: 18px;
+      color: #333;
+      margin-top: 20px;
+    }
+
+    #nameForm {
+      display: block;
+    }
+
+    #gameForm {
+      display: none;
     }
   </style>
 </head>
 <body>
   <h1>Guess the Number Game</h1>
-  <p>Guess a number between 1 and 100:</p>
-  <input type="text" id="guessInput">
-  <button onclick="checkGuess()">Submit Guess</button>
-  <p id="message"></p>
+  <div id="nameForm">
+    <p>Enter your name:</p>
+    <input type="text" id="playerName">
+    <button onclick="startGame()">Start Game</button>
+    <p id="gameMessage"></p>
+  </div>
+
+  <div id="gameForm">
+    <p id="gamePrompt"></p>
+    <input type="text" id="guessInput" onkeydown="handleGuessEnter(event)">
+    <button onclick="checkGuess()">Submit Guess</button>
+    <p id="message"></p>
+  </div>
 
   <script>
-    // Generate random number between 1 and 100
+    const nameForm = document.getElementById('nameForm');
+    const gameForm = document.getElementById('gameForm');
+    const gamePrompt = document.getElementById('gamePrompt');
+    const playerNameInput = document.getElementById('playerName');
+    const messageElement = document.getElementById('message');
     const randomNumber = Math.floor(Math.random() * 100) + 1;
-
     let attempts = 0;
 
+    function startGame() {
+      const playerName = playerNameInput.value.trim();
+
+      if (playerName === '') {
+        document.getElementById('gameMessage').textContent = 'Please enter your name.';
+        return;
+      }
+
+      nameForm.style.display = 'none';
+      gameForm.style.display = 'block';
+      gamePrompt.textContent = `${playerName}, enter a number between 1 and 100:`;
+    }
+
+    function handleGuessEnter(event) {
+      if (event.key === 'Enter') {
+        checkGuess();
+      }
+    }
+
     function checkGuess() {
-      const guess = parseInt(document.getElementById('guessInput').value);
-      attempts++;
-
-      const messageElement = document.getElementById('message');
-
+      const guessInput = document.getElementById('guessInput');
+      const guess = parseInt(guessInput.value);
+      
       if (isNaN(guess) || guess < 1 || guess > 100) {
         messageElement.textContent = 'Please enter a valid number between 1 and 100.';
         return;
       }
 
+      attempts++;
       if (guess === randomNumber) {
         messageElement.textContent = `Congratulations! You guessed the number ${randomNumber} correctly in ${attempts} attempts.`;
       } else if (guess < randomNumber) {
